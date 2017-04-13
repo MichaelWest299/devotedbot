@@ -15,7 +15,6 @@ initial_extensions = [
     'cogs.aqual',
     'cogs.roll',
     'cogs.wareffort',
-    'cogs.aqual',
     'cogs.chucknorris',
     'cogs.youtube'
 ]
