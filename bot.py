@@ -14,6 +14,7 @@ initial_extensions = [
     'cogs.raid',
     'cogs.aqual',
     'cogs.roll',
+    'cogs.wareffort',
     'cogs.chucknorris',
     'cogs.youtube',
     'cogs.trivia',
