@@ -3,7 +3,6 @@ import discord
 import praw
 import random
 
-
 class Aww:
 
     def __init__(self, bot):

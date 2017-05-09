@@ -5,6 +5,7 @@ import iso8601
 import pytz
 import json
 import aiohttp
+import re
 
 class Raid:
 
@@ -39,9 +40,14 @@ class Raid:
                 for j in apps_json['game_classes']:
                     if (j['id'] == i['game_class_id']):
                         open_apps.append(i['name']+': '+j['name'])
-        string_list = ', '.join(open_apps)
-        number = str(len(open_apps))
-        await self.bot.say('We have ' + number + ' open application(s). ' + string_list)
+        string_list = '\n'.join(open_apps)
+        if not string_list:
+            embed = discord.Embed(colour=0xFF0000, description='We have no open applications.')
+            await self.bot.say(embed=embed)
+        else:
+            embed = discord.Embed(colour=0x00FF00, description=string_list)
+            embed.title = 'Applications'
+            await self.bot.say(embed=embed)
 
     @commands.command()
     async def raid(self):
@@ -49,12 +55,21 @@ class Raid:
         events_json = await self.get_data('events')
         for i in events_json['event_objects']:
             if(iso8601.parse_date(i['date'])>now):
-                raid_string = 'The next event will be ' + '\'' + i['name'] + '\'' + ' on ' + iso8601.parse_date(i['date']).strftime('%a %d %B %H:%M') + ', please visit http://devoted-gaming.shivtr.com/events/' + str(i['id']) + '?event_instance_id=' + str(i['event_category_id']) + ' to sign up!'
+                raid_string = iso8601.parse_date(i['date']).strftime('%a %d %B %H:%M') + '\nPlease [click here](http://devoted-gaming.shivtr.com/events/' + str(i['id']) + '?event_instance_id=' + str(i['event_category_id']) + ' \"' + i['name'] + '\") to sign up!'
+                embed = discord.Embed(colour=0x00FF00, description=raid_string)
+                embed.title = i['name']
+                data = 	i['description']
+                search_url = re.search(r'(http)://.*?\.(jpg|png)', data)
+                if search_url:
+                    found_url = search_url.group(0)
+                    embed.set_image(url=found_url)
                 break
             else:
                 raid_string = 'There are currently no events scheduled.'
+                embed = discord.Embed(colour=0xFF0000, description=raid_string)
 
-        await self.bot.say(raid_string)
+          # Can use discord.Colour()
+        await self.bot.say(embed=embed)
 
 def setup(bot):
     bot.add_cog(Raid(bot))

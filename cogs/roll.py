@@ -2,7 +2,6 @@ from discord.ext import commands
 import discord
 from random import randint
 
-
 class Roll:
 
     def __init__(self, bot):
@@ -14,7 +13,7 @@ class Roll:
         if number is None:
             await self.bot.say(member + ' rolls ' + str(randint(1, 100)) + ' (1-100)')
         else:
-            await self.bot.say(member + ' rolls ' + str(randint(1, number)) + ' (1-' + str(number) + ')')
+            await self.bot.say(member + ' rolls ' + str(randint(1, number)) + ' (1-'+str(number)+')')
 
 
 def setup(bot):

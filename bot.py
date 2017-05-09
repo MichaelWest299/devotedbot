@@ -14,17 +14,17 @@ initial_extensions = [
     'cogs.raid',
     'cogs.aqual',
     'cogs.roll',
-    'cogs.wareffort',
-    'cogs.aqual',
     'cogs.chucknorris',
-    'cogs.youtube'
+    'cogs.youtube',
+    'cogs.trivia',
+    'cogs.blackjack'
 ]
 
 description = """
 Hello! I am a bot written by Globalelite, giving you raid information and more!
 """
 help_attrs = dict(hidden=True)
-prefix = ['?', '!', '\N{HEAVY EXCLAMATION MARK SYMBOL}']
+prefix = ['!', '\N{HEAVY EXCLAMATION MARK SYMBOL}']
 bot = commands.Bot(command_prefix=prefix, description=description, pm_help=None, help_attrs=help_attrs)
 
 def load_credentials():
