@@ -169,7 +169,7 @@ class Blackjack:
 
     @commands.command(pass_context=True)
     async def blackjack(self, ctx):
-        if(ctx.message.channel == self.bot.get_channel('311063247472033792')):
+        if(ctx.message.channel == self.bot.get_channel(self.bot.BLACKJACK_ROOM_ID)):
             num_players = 2
             deck_id = await self.get_deck_id()
             url = 'https://deckofcardsapi.com/api/deck/' + deck_id + '/draw/?count=' + str(num_players * 20)

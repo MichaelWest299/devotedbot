@@ -97,7 +97,7 @@ class Trivia:
     @commands.command(pass_context=True)
     async def trivia(self, ctx):
 
-        if(ctx.message.channel == self.bot.get_channel('311063195164868612')):
+        if(ctx.message.channel == self.bot.get_channel(self.bot.TRIVIA_ROOM_ID)):
             highscores = self.read()
             self.init_new_player(ctx, highscores)
             url = 'https://opentdb.com/api.php?amount=1'
