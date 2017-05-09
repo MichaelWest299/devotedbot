@@ -9,11 +9,11 @@ class Aqual:
         self.bot = bot
 
     def read(self):
-        with open('aqual.txt', 'rb') as f:
+        with open('cogs/aqual/aqual.txt', 'rb') as f:
             return pickle.load(f)
 
     def write(self, list):
-        with open('aqual.txt', 'wb') as f:
+        with open('cogs/aqual/aqual.txt', 'wb') as f:
             pickle.dump(list, f)
 
     @commands.command(pass_context=True)

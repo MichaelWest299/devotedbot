@@ -16,11 +16,11 @@ class Trivia:
         self.session.close()
 
     def read(self):
-        with open('highscores.txt', 'rb') as f:
+        with open('cogs/trivia/highscores.txt', 'rb') as f:
             return pickle.load(f)
 
     def write(self, highscores):
-        with open('highscores.txt', 'wb') as f:
+        with open('cogs/trivia/highscores.txt', 'wb') as f:
             pickle.dump(highscores, f)
 
     async def handle_response(self, ctx, highscores, results, award):

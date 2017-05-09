@@ -12,12 +12,12 @@ else:
 initial_extensions = [
     'cogs.aww',
     'cogs.raid',
-    'cogs.aqual',
+    'cogs.aqual.aqual',
     'cogs.roll',
     'cogs.wareffort',
     'cogs.chucknorris',
     'cogs.youtube',
-    'cogs.trivia',
+    'cogs.trivia.trivia',
     'cogs.blackjack'
 ]
 
