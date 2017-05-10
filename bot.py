@@ -12,7 +12,7 @@ else:
 initial_extensions = [
     'cogs.reddit',
     'cogs.raid',
-    'cogs.aqual',
+    'cogs.aqual.aqual',
     'cogs.roll',
     'cogs.chucknorris',
     'cogs.youtube',
@@ -37,7 +37,7 @@ async def on_read():
 
 if __name__ == '__main__':
     credentials = load_credentials()
-    
+
     token = credentials['BOT_TOKEN']
     bot.CLIENT_ID = credentials['CLIENT_ID']
     bot.CLIENT_SECRET = credentials['CLIENT_SECRET']
