@@ -17,7 +17,8 @@ initial_extensions = [
     'cogs.chucknorris',
     'cogs.youtube',
     'cogs.trivia.trivia',
-    'cogs.blackjack'
+    'cogs.blackjack',
+    'cogs.8ball'
 ]
 
 description = """
