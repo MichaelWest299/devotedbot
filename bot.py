@@ -10,15 +10,15 @@ else:
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 initial_extensions = [
-    'cogs.aww',
+    'cogs.reddit',
     'cogs.raid',
-    'cogs.aqual.aqual',
+    'cogs.aqual',
     'cogs.roll',
-    'cogs.wareffort',
     'cogs.chucknorris',
     'cogs.youtube',
     'cogs.trivia.trivia',
     'cogs.blackjack'
+    # 'cogs.help'
 ]
 
 description = """
@@ -46,8 +46,8 @@ if __name__ == '__main__':
     bot.PRAW_USER_AGENT = credentials['PRAW']['USER_AGENT']
     bot.RAID_HEADERS = credentials['RAID']['HEADERS']
     bot.RAID_DATA = credentials['RAID']['DATA']
-    bot.TRIVIA_ROOM_ID = credentials['TRIVIA_ROOM_ID']
-    bot.BLACKJACK_ROOM_ID = credentials['BLACKJACK_ROOM_ID']
+
+    # bot.remove_command('help')
 
     for extension in initial_extensions:
         bot.load_extension(extension)
