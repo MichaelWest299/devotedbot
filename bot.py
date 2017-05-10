@@ -18,7 +18,6 @@ initial_extensions = [
     'cogs.youtube',
     'cogs.trivia.trivia',
     'cogs.blackjack'
-    # 'cogs.help'
 ]
 
 description = """
@@ -38,6 +37,7 @@ async def on_read():
 
 if __name__ == '__main__':
     credentials = load_credentials()
+    
     token = credentials['BOT_TOKEN']
     bot.CLIENT_ID = credentials['CLIENT_ID']
     bot.CLIENT_SECRET = credentials['CLIENT_SECRET']
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     bot.RAID_HEADERS = credentials['RAID']['HEADERS']
     bot.RAID_DATA = credentials['RAID']['DATA']
 
-    # bot.remove_command('help')
+    bot.remove_command('help')
 
     for extension in initial_extensions:
         bot.load_extension(extension)
