@@ -47,6 +47,8 @@ if __name__ == '__main__':
     bot.PRAW_USER_AGENT = credentials['PRAW']['USER_AGENT']
     bot.RAID_HEADERS = credentials['RAID']['HEADERS']
     bot.RAID_DATA = credentials['RAID']['DATA']
+    bot.TRIVIA_ROOM_ID = credentials['TRIVIA_ROOM_ID']
+    bot.BLACKJACK_ROOM_ID = credentials['BLACKJACK_ROOM_ID']
 
     bot.remove_command('help')
 
