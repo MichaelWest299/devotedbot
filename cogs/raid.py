@@ -18,7 +18,7 @@ class Raid:
 
     async def get_token(self):
         headers = {"Content-Type": "application/json"}
-        data = json.dumps(self.bot.RAID_DATA)
+        data = json.dumps(self.bot.SHIVTR_DATA)
 
         async with self.session.post('http://devoted-gaming.shivtr.com/users/sign_in.json', headers=headers, data=data) as r:
             captured_json = await r.json()

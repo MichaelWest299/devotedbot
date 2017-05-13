@@ -40,13 +40,13 @@ if __name__ == '__main__':
     credentials = load_credentials()
 
     token = credentials['BOT_TOKEN']
-    bot.CLIENT_ID = credentials['CLIENT_ID']
-    bot.CLIENT_SECRET = credentials['CLIENT_SECRET']
+    bot.CLIENT_ID = credentials['BOT_CLIENT_ID']
+    bot.CLIENT_SECRET = credentials['BOT_CLIENT_SECRET']
     bot.PRAW_CLIENT_ID = credentials['PRAW']['CLIENT_ID']
     bot.PRAW_CLIENT_SECRET = credentials['PRAW']['CLIENT_SECRET']
     bot.PRAW_USER_AGENT = credentials['PRAW']['USER_AGENT']
-    bot.RAID_HEADERS = credentials['RAID']['HEADERS']
-    bot.RAID_DATA = credentials['RAID']['DATA']
+    bot.SHIVTR_HEADERS = credentials['SHIVTR']['HEADERS']
+    bot.SHIVTR_DATA = credentials['SHIVTR']['DATA']
     bot.TRIVIA_ROOM_ID = credentials['TRIVIA_ROOM_ID']
     bot.BLACKJACK_ROOM_ID = credentials['BLACKJACK_ROOM_ID']
 
