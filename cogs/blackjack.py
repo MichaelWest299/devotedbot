@@ -125,9 +125,9 @@ class Blackjack:
 
 
 
-    async def deal(self, ctx, num_players, cards):
+    async def deal(self, ctx, cards):
 
-        players = [Hand() for i in range(num_players)]
+        players = [Hand() for i in range(2)]
         card_index = 0
         for obj in players:
 
@@ -135,8 +135,8 @@ class Blackjack:
                      cards[players.index(obj)]['value'])
             obj.add_card(x)
 
-            g = Card(cards[players.index(obj) + num_players]['suit'],
-                     cards[players.index(obj) + num_players]['value'])
+            g = Card(cards[players.index(obj) + 2]['suit'],
+                     cards[players.index(obj) + 2]['value'])
             obj.add_card(g)
             card_index += 2
 
@@ -170,13 +170,12 @@ class Blackjack:
     @commands.command(pass_context=True)
     async def blackjack(self, ctx):
         if(ctx.message.channel == self.bot.get_channel(self.bot.BLACKJACK_ROOM_ID)):
-            num_players = 2
             deck_id = await self.get_deck_id()
-            url = 'https://deckofcardsapi.com/api/deck/' + deck_id + '/draw/?count=' + str(num_players * 20)
+            url = 'https://deckofcardsapi.com/api/deck/' + deck_id + '/draw/?count=' + str(40)
             async with self.session.get(url) as r:
                 js = await r.json()
                 cards = js['cards']
-                await self.deal(ctx, num_players, cards)
+                await self.deal(ctx, cards)
         else:
             await self.bot.say("Please use the blackjack channel.")
 
