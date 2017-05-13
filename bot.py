@@ -21,12 +21,9 @@ initial_extensions = [
     'cogs.8ball'
 ]
 
-description = """
-Hello! I am a bot written by Globalelite, giving you raid information and more!
-"""
 help_attrs = dict(hidden=True)
 prefix = ['!', '\N{HEAVY EXCLAMATION MARK SYMBOL}']
-bot = commands.Bot(command_prefix=prefix, description=description, pm_help=None, help_attrs=help_attrs)
+bot = commands.Bot(command_prefix=prefix, pm_help=None, help_attrs=help_attrs)
 
 def load_credentials():
     with open('credentials.json') as f:
