@@ -23,6 +23,14 @@ class Trivia:
         with open('cogs/trivia/highscores.txt', 'wb') as f:
             pickle.dump(highscores, f)
 
+    def award_points(self, user, points):
+        highscores = self.read()
+        if user in highscores:
+            highscores[user] += points
+        else:
+            highscores[user] = points
+        self.write(highscores)
+
     async def handle_response(self, ctx, highscores, results, award):
         reply = await self.bot.wait_for_message(author=ctx.message.author, channel=ctx.message.channel, timeout=20.0)
         if reply is None:
@@ -59,6 +67,15 @@ class Trivia:
             award = 3
         return award
 
+    @commands.command(pass_context=True)
+    async def award(self, ctx, user: str, points: int):
+        if(ctx.message.author.name == 'Globalelite'):
+            self.award_points(user, points)
+            description = str(points) + ' points has been award to ' + user
+            embed = discord.Embed(colour=0x00FF00, description=description)
+            await self.bot.say(embed=embed)
+        else:
+            await self.bot.say('You are not permitted to do that.')
 
     @commands.command(pass_context=True)
     async def clearhighscores(self, ctx):
