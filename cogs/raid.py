@@ -20,14 +20,14 @@ class Raid:
         headers = {"Content-Type": "application/json"}
         data = json.dumps(self.bot.SHIVTR_DATA)
 
-        async with self.session.post('http://devoted-gaming.shivtr.com/users/sign_in.json', headers=headers, data=data) as r:
+        async with self.session.post(self.bot.SHIVTR_URL + 'users/sign_in.json', headers=headers, data=data) as r:
             captured_json = await r.json()
             authenticity_token = captured_json['user_session']['authentication_token']
             return authenticity_token
 
     async def get_data(self, data):
         authenticity_token = await self.get_token()
-        async with self.session.get('http://devoted-gaming.shivtr.com/' + data + '.json?auth_token=' + authenticity_token) as r:
+        async with self.session.get(self.bot.SHIVTR_URL + data + '.json?auth_token=' + authenticity_token) as r:
             js = await r.json()
             return js
 
@@ -53,22 +53,19 @@ class Raid:
     async def raid(self):
         now = iso8601.parse_date(datetime.datetime.now(pytz.timezone('Europe/Amsterdam')).replace(microsecond=0).isoformat())
         events_json = await self.get_data('events')
-        for i in events_json['event_objects']:
+        for i in events_json['events']:
             if(iso8601.parse_date(i['date'])>now):
-                raid_string = iso8601.parse_date(i['date']).strftime('%a %d %B %H:%M') + '\nPlease [click here](http://devoted-gaming.shivtr.com/events/' + str(i['id']) + '?event_instance_id=' + str(i['event_category_id']) + ' \"' + i['name'] + '\") to sign up!'
-                embed = discord.Embed(colour=0x00FF00, description=raid_string)
-                embed.title = i['name']
-                data = 	i['description']
-                search_url = re.search(r'(http)://.*?\.(jpg|png)', data)
-                if search_url:
-                    found_url = search_url.group(0)
-                    embed.set_image(url=found_url)
+                event_id = i['event_id']
+                for j in events_json['event_objects']:
+                    if(j['id'] == event_id):
+                        raid_string = iso8601.parse_date(i['date']).strftime('%a %d %B %H:%M') + '\nPlease [click here](' + self.bot.SHIVTR_URL + 'events/' + str(i['event_id']) + '?event_instance_id=' + str(i['id']) + ' \"' + j['name'] + '\") to sign up!'
+                        embed = discord.Embed(colour=0x00FF00, description=raid_string)
+                        embed.title = j['name']
                 break
             else:
                 raid_string = 'There are currently no events scheduled.'
                 embed = discord.Embed(colour=0xFF0000, description=raid_string)
 
-          # Can use discord.Colour()
         await self.bot.say(embed=embed)
 
 def setup(bot):

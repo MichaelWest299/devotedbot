@@ -44,6 +44,7 @@ if __name__ == '__main__':
     bot.PRAW_USER_AGENT = credentials['PRAW']['USER_AGENT']
     bot.SHIVTR_HEADERS = credentials['SHIVTR']['HEADERS']
     bot.SHIVTR_DATA = credentials['SHIVTR']['DATA']
+    bot.SHIVTR_URL = credentials['SHIVTR']['URL']
     bot.TRIVIA_ROOM_ID = credentials['TRIVIA_ROOM_ID']
     bot.BLACKJACK_ROOM_ID = credentials['BLACKJACK_ROOM_ID']
 
