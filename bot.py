@@ -48,6 +48,7 @@ if __name__ == '__main__':
     bot.SHIVTR_URL = credentials['SHIVTR']['URL']
     bot.TRIVIA_ROOM_ID = credentials['TRIVIA_ROOM_ID']
     bot.BLACKJACK_ROOM_ID = credentials['BLACKJACK_ROOM_ID']
+    bot.RANDOM_ROOM_ID = credentials['RANDOM_ROOM_ID']
 
     bot.remove_command('help')
 
