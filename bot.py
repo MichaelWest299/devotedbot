@@ -19,7 +19,8 @@ initial_extensions = [
     'cogs.trivia.trivia',
     'cogs.blackjack',
     'cogs.8ball',
-    'cogs.music'
+    'cogs.music',
+    'cogs.twitch.twitch'
 ]
 
 help_attrs = dict(hidden=True)
