@@ -60,18 +60,5 @@ class Twitch:
             await asyncio.sleep(30)
 
 
-    @commands.command()
-    async def test(self):
-        livestreams = {
-            'kwazorn': 'offline',
-            'nephzz': 'offline',
-            'kimpossible87': 'offline',
-            'notgucci': 'offline',
-            'summit1g': 'offline'
-        }
-        for key in livestreams.keys():
-          print(key)
-
-
 def setup(bot):
     bot.add_cog(Twitch(bot))
