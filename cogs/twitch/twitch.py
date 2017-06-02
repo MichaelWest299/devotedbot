@@ -11,11 +11,9 @@ class Twitch:
     def __init__(self, bot):
         self.bot = bot
         self.session = aiohttp.ClientSession(loop=bot.loop)
-        self.task = self.bot.loop.create_task(self.check_streamers())
 
     def __unload(self):
         self.session.close()
-        self.task.cancel()
 
     def read(self):
         with open('cogs/twitch/livestreams.txt', 'rb') as f:
@@ -28,14 +26,24 @@ class Twitch:
     @commands.command()
     @checks.is_owner()
     async def disablealerts(self):
-        self.task.cancel()
-        await self.bot.say('Twitch alerts have been disabled.')
+        try:
+            self.task.cancel()
+            await self.bot.say('Twitch alerts have been disabled.')
+        except AttributeError:
+            await self.bot.say('Twitch alerts are already disabled.')
+
 
     @commands.command()
     @checks.is_owner()
     async def enablealerts(self):
-        self.task = self.bot.loop.create_task(self.check_streamers())
-        await self.bot.say('Twitch alerts have been enabled.')
+        try:
+            self.task.cancel()
+            self.task = self.bot.loop.create_task(self.check_streamers())
+            await self.bot.say('Twitch alerts are already enabled.')
+        except AttributeError:
+            self.task = self.bot.loop.create_task(self.check_streamers())
+            await self.bot.say('Twitch alerts have been enabled.')
+
 
     @commands.command()
     async def removetwitch(self, message: str):
@@ -73,19 +81,16 @@ class Twitch:
             msg = streamer + ' has gone live!'
             js = await r.json()
             livestreams = self.read()
-            print(livestreams[streamer] == 'offline')
             if js['stream'] and (livestreams[streamer] == 'offline'):
-                print(streamer + ' has gone live')
                 livestreams[streamer] = 'online'
                 self.write(livestreams)
                 await self.bot.send_message(channel, msg)
                 await self.bot.send_message(channel, link)
             elif js['stream'] is None and (livestreams[streamer] == 'online'):
-                print(streamer + ' has gone offline')
                 livestreams[streamer] = 'offline'
                 self.write(livestreams)
             else:
-                print(streamer + ' is already offline or online')
+                return
 
 
 
@@ -93,7 +98,6 @@ class Twitch:
         await self.bot.wait_until_ready()
         await asyncio.sleep(5)
         while not self.bot.is_closed:
-            print(1)
             livestreams = self.read()
             for key in livestreams.keys():
               await self.notify_live(key)
