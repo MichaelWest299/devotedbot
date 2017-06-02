@@ -70,7 +70,8 @@ class Twitch:
         livestreams = self.read()
         string_list = '\n'.join(livestreams.keys())
         number = str(len(livestreams.keys()))
-        await self.bot.say(string_list)
+        embed = discord.Embed(colour=0x8080ff, title='__Streams__', description=string_list)
+        await self.bot.say(embed=embed)
 
 
     async def notify_live(self, streamer):
