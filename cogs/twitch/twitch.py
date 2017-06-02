@@ -68,7 +68,7 @@ class Twitch:
     @commands.command()
     async def listtwitch(self):
         livestreams = self.read()
-        string_list = '\n'.join(livestreams.keys())
+        string_list = '\n'.join('[' + item + ']' + '(https://www.twitch.tv/' + item + ')' for item in livestreams.keys())
         number = str(len(livestreams.keys()))
         embed = discord.Embed(colour=0x8080ff, title='__Streams__', description=string_list)
         await self.bot.say(embed=embed)
