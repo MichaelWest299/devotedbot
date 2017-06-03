@@ -74,11 +74,10 @@ class Twitch:
     @commands.command()
     async def twitchlist(self):
         livestreams = self.read()
-        string_list = '\n'.join(
-            '[' + item + ']' + '(https://www.twitch.tv/' + item + ')' for item in livestreams.keys())
+        string_list = '\n'.join('[' + item + ']' + '(https://www.twitch.tv/' + item + ')' for item in livestreams.keys())
         number = str(len(livestreams.keys()))
-        embed = discord.Embed(
-            colour=0x8080ff, title='__Twitch Notifications__', description=string_list)
+        embed = discord.Embed(colour=0x8080ff, title='', description=string_list)
+        embed.set_author(name="Twitch Notifications", icon_url='https://web.twitchapp.net/laguna/cdn/assets/images/favicon/favicon-196x196.png')
         await self.bot.say(embed=embed)
 
     async def notify_live(self, streamer):
