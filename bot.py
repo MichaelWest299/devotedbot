@@ -21,7 +21,8 @@ initial_extensions = {
     'cogs.blackjack',
     'cogs.8ball',
     'cogs.music',
-    'cogs.twitch.twitch'
+    'cogs.twitch.twitch',
+    'cogs.define'
 }
 
 description = """
@@ -56,6 +57,7 @@ if __name__ == '__main__':
     bot.RANDOM_ROOM_ID = credentials['RANDOM_ROOM_ID']
     bot.TWITCH_CLIENT_ID = credentials['TWITCH_CLIENT_ID']
     bot.TWITCH_ALERT_CHANNEL = credentials['TWITCH_ALERT_CHANNEL']
+    bot.WORDNIK_API_KEY = credentials['WORDNIK_API_KEY']
 
     bot.remove_command('help')
 
