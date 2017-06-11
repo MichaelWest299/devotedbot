@@ -14,7 +14,7 @@ class Define:
 
     @commands.command()
     async def define(self, word: str):
-        url = 'http://api.wordnik.com:80/v4/word.json/' + word + '/definitions?limit=10&includeRelated=true&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=' + self.bot.WORDNIK_API_KEY
+        url = 'http://api.wordnik.com:80/v4/word.json/' + word.lower() + '/definitions?limit=10&includeRelated=true&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=' + self.bot.WORDNIK_API_KEY
 
         try:
             async with self.session.get(url) as r:
