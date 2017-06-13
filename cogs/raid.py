@@ -6,15 +6,19 @@ import pytz
 import json
 import aiohttp
 import re
+import asyncio
+import pytz
 
 class Raid:
 
     def __init__(self, bot):
         self.bot = bot
         self.session = aiohttp.ClientSession(loop=bot.loop)
+        self.reminder = self.bot.loop.create_task(self.scheduler())
 
     def __unload(self):
         self.session.close()
+        self.reminder.cancel()
 
     async def get_token(self):
         headers = {"Content-Type": "application/json"}
@@ -67,6 +71,34 @@ class Raid:
                 embed = discord.Embed(colour=0xFF0000, description=raid_string)
 
         await self.bot.say(embed=embed)
+
+    async def signup_reminder(self):
+        channel = self.bot.get_channel('314866130600853516')
+        reminder_message = 'Sign up window closes in 1 hour, type !raid in chat for a link to the event.'
+        embed = discord.Embed(colour=0xFF9900, description=reminder_message)
+        await self.bot.send_message(channel, '@everyone')
+        await self.bot.send_message(channel, embed=embed)
+
+    async def signup_close(self):
+        channel = self.bot.get_channel('314866130600853516')
+        closed_message = 'Sign up window has now closed. If for whatever reason you missed the window, type !raid in chat for a link to the event and comment your status.'
+        embed = discord.Embed(colour=0xFF0000, description=closed_message)
+        await self.bot.send_message(channel, '@everyone')
+        await self.bot.send_message(channel, embed=embed)
+
+    async def scheduler(self):
+        await self.bot.wait_until_ready()
+        await asyncio.sleep(5)
+        while not self.bot.is_closed:
+            tz = pytz.timezone('Europe/Amsterdam')
+            now = datetime.datetime.now(tz)
+            if datetime.datetime.today().weekday() in (1,5) and now.strftime('%H%M') == '1745':
+                await self.signup_reminder()
+            elif datetime.datetime.today().weekday() in (1,5) and now.strftime('%H%M') == '1845':
+                await self.signup_close()
+            else:
+                pass
+            await asyncio.sleep(60)
 
 def setup(bot):
     bot.add_cog(Raid(bot))

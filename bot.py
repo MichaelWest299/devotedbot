@@ -58,7 +58,8 @@ if __name__ == '__main__':
     bot.TWITCH_CLIENT_ID = credentials['TWITCH_CLIENT_ID']
     bot.TWITCH_ALERT_CHANNEL = credentials['TWITCH_ALERT_CHANNEL']
     bot.WORDNIK_API_KEY = credentials['WORDNIK_API_KEY']
-
+    bot.REMINDER_ROOM_ID = credentials['REMINDER_ROOM_ID']
+    
     bot.remove_command('help')
 
     for extension in initial_extensions:
