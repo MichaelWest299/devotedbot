@@ -1,4 +1,5 @@
 from discord.ext import commands
+from cogs.utils import checks
 import discord
 import aiohttp
 import html
@@ -68,14 +69,13 @@ class Trivia:
         return award
 
     @commands.command(pass_context=True)
+    @checks.is_owner()
     async def award(self, ctx, user: str, points: int):
-        if(ctx.message.author.name == 'Globalelite'):
-            self.award_points(user, points)
-            description = str(points) + ' points has been award to ' + user
-            embed = discord.Embed(colour=0x00FF00, description=description)
-            await self.bot.say(embed=embed)
-        else:
-            await self.bot.say('You are not permitted to do that.')
+        self.award_points(user, points)
+        description = str(points) + ' points has been award to ' + user
+        embed = discord.Embed(colour=0x00FF00, description=description)
+        await self.bot.say(embed=embed)
+        
 
     @commands.command(pass_context=True)
     async def clearhighscores(self, ctx):
