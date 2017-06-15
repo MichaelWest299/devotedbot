@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 import json
 import aiohttp
+import pickle
 
 # define globals for cards
 SUITS = {'CLUBS': ':clubs:', 'SPADES': ':spades:',
@@ -62,6 +63,19 @@ class Blackjack:
         self.bot = bot
         self.session = aiohttp.ClientSession(loop=bot.loop)
 
+    def read(self):
+        with open('cogs/trivia/highscores.txt', 'rb') as f:
+            return pickle.load(f)
+
+    def write(self, highscores):
+        with open('cogs/trivia/highscores.txt', 'wb') as f:
+            pickle.dump(highscores, f)
+    
+    def init_new_player(self, ctx, highscores):
+        if not (ctx.message.author.name in highscores):
+            highscores[ctx.message.author.name] = 0
+            self.write(highscores)
+
     async def get_deck_id(self):
         url = 'https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=6'
         async with self.session.get(url) as r:
@@ -80,15 +94,26 @@ class Blackjack:
         embed = discord.Embed(colour=0x00FF00)
         embed.add_field(name='Dealer', value=dealer_cards, inline=True)
         await self.bot.say(embed=embed)
-
+        highscores = self.read()
         if players[0].get_value() > 21:
+            highscores[ctx.message.author.name] += 1
+            text =  ctx.message.author.name + ' was awarded 1 point and now has a score of ' + str(highscores[ctx.message.author.name])
             embed = discord.Embed(colour=0x00FF00, description= ctx.message.author.name + " wins! Dealer busted with " + ' **' + str(players[0].get_value()) + '**')
         elif players[0].get_value() > players[1].get_value():
+            highscores[ctx.message.author.name] -= 1
+            text =  ctx.message.author.name + ' has lost 1 point and now has a score of ' + str(highscores[ctx.message.author.name])
             embed = discord.Embed(colour=0xFF0000, description="Dealer wins with " + ' **' + str(players[0].get_value()) + '**')
         elif players[0].get_value() == players[1].get_value():
+            highscores[ctx.message.author.name] -= 1
+            text =  ctx.message.author.name + ' has lost 1 point and now has a score of ' + str(highscores[ctx.message.author.name])
             embed = discord.Embed(colour=0xFF0000, description="Tie! Dealer wins with " + ' **' + str(players[0].get_value()) + '**')
         elif players[0].get_value() < players[1].get_value():
+            highscores[ctx.message.author.name] += 1
+            text =  ctx.message.author.name + ' was awarded 1 point and now has a score of ' + str(highscores[ctx.message.author.name])
             embed = discord.Embed(colour=0x00FF00, description=ctx.message.author.name + " wins with " + ' **' + str(players[1].get_value()) + '**')
+        
+        self.write(highscores)    
+        embed.set_footer(text=text, icon_url=ctx.message.author.avatar_url)
         await self.bot.say(embed=embed)
 
 
@@ -110,7 +135,12 @@ class Blackjack:
             embed.add_field(name=ctx.message.author.name, value=user_cards, inline=True)
             await self.bot.say(embed=embed)
             if(players[1].get_value() > 21):
+                highscores = self.read()
+                highscores[ctx.message.author.name] -= 1
+                text =  ctx.message.author.name + ' has lost 1 point and now has a score of ' + str(highscores[ctx.message.author.name])
                 embed = discord.Embed(colour=0xFF0000, description='Dealer wins! ' + ctx.message.author.name + ' busted with **' + str(players[1].get_value()) + '**')
+                self.write(highscores)
+                embed.set_footer(text=text, icon_url=ctx.message.author.avatar_url)
                 return await self.bot.say(embed=embed)
             elif(players[1].get_value() == 21):
                 await self.stand(ctx, card_index, players, cards)
@@ -153,14 +183,24 @@ class Blackjack:
             embed = discord.Embed(colour=0x00FF00)
             embed.add_field(name='Dealer', value=dealer_cards, inline=True)
             await self.bot.say(embed=embed)
+            highscores = self.read()
+            highscores[ctx.message.author.name] += 1
             embed = discord.Embed(colour=0x00FF00, description=ctx.message.author.name + " wins with a blackjack!")
+            self.write(highscores)
+            text =  ctx.message.author.name + ' was awarded 1 point and now has a score of ' + str(highscores[ctx.message.author.name])
+            embed.set_footer(text=text, icon_url=ctx.message.author.avatar_url)
             await self.bot.say(embed=embed)
 
         elif(players[1].get_value() == 21 and players[0].get_value() == 21):
             embed = discord.Embed(colour=0x00FF00)
             embed.add_field(name='Dealer', value=dealer_cards, inline=True)
             await self.bot.say(embed=embed)
+            highscores = self.read()
+            highscores[ctx.message.author.name] -= 1
             embed = discord.Embed(colour=0xFF0000, description="Tie! Dealer wins with a blackjack!")
+            self.write(highscores)
+            text =  ctx.message.author.name + ' has lost 1 point and now has a score of ' + str(highscores[ctx.message.author.name])
+            embed.set_footer(text=text, icon_url=ctx.message.author.avatar_url)
             await self.bot.say(embed=embed)
         else:
             await self.follow_up(ctx, card_index, players, cards)
@@ -170,6 +210,8 @@ class Blackjack:
     @commands.command(pass_context=True)
     async def blackjack(self, ctx):
         if(ctx.message.channel == self.bot.get_channel(self.bot.RANDOM_ROOM_ID)):
+            highscores = self.read()
+            self.init_new_player(ctx, highscores)
             num_players = 2
             deck_id = await self.get_deck_id()
             url = 'https://deckofcardsapi.com/api/deck/' + deck_id + '/draw/?count=' + str(num_players * 20)
