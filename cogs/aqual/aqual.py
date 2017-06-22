@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord
+from cogs.utils import checks
 import pickle
 
 
@@ -9,22 +10,19 @@ class Aqual:
         self.bot = bot
 
     def read(self):
-        with open('cogs/aqual/aqual.txt', 'rb') as f:
+        with open('aqual.txt', 'rb') as f:
             return pickle.load(f)
 
     def write(self, list):
-        with open('cogs/aqual/aqual.txt', 'wb') as f:
+        with open('aqual.txt', 'wb') as f:
             pickle.dump(list, f)
 
     @commands.command(pass_context=True)
+    @checks.is_owner()
     async def aqualclear(self, ctx):
-        if(ctx.message.author.name == 'Globalelite'):
-            list = []
-            self.write(list)
-            embed = discord.Embed(colour=0x00FF00, description='Aqual list cleared.')
-        else:
-            raid_string = 'There are currently no events scheduled.'
-            embed = discord.Embed(colour=0xFF0000, description='You are not permitted to do that.')
+        list = []
+        self.write(list)
+        embed = discord.Embed(colour=0x00FF00, description='Aqual list cleared.')
         await self.bot.say(embed=embed)
 
 
