@@ -9,6 +9,7 @@ import re
 import asyncio
 import pytz
 
+
 class Raid:
 
     def __init__(self, bot):
@@ -22,16 +23,16 @@ class Raid:
 
     async def get_token(self):
         headers = {"Content-Type": "application/json"}
-        data = json.dumps(self.bot.SHIVTR_DATA)
+        data = json.dumps(self.bot.RAID_DATA)
 
-        async with self.session.post(self.bot.SHIVTR_URL + 'users/sign_in.json', headers=headers, data=data) as r:
+        async with self.session.post(self.bot.RAID_URL + 'users/sign_in.json', headers=headers, data=data) as r:
             captured_json = await r.json()
             authenticity_token = captured_json['user_session']['authentication_token']
             return authenticity_token
 
     async def get_data(self, data):
         authenticity_token = await self.get_token()
-        async with self.session.get(self.bot.SHIVTR_URL + data + '.json?auth_token=' + authenticity_token) as r:
+        async with self.session.get(self.bot.RAID_URL + data + '.json?auth_token=' + authenticity_token) as r:
             js = await r.json()
             return js
 
@@ -53,8 +54,12 @@ class Raid:
             embed.title = 'Applications'
             await self.bot.say(embed=embed)
 
-    @commands.command()
-    async def raid(self):
+    @commands.command(pass_context=True)
+    async def raid(self, ctx):
+        channel = ctx.message.channel
+        await self.raid_details(channel)
+    
+    async def raid_details(self, channel):
         now = iso8601.parse_date(datetime.datetime.now(pytz.timezone('Europe/Amsterdam')).replace(microsecond=0).isoformat())
         events_json = await self.get_data('events')
         for i in events_json['events']:
@@ -62,7 +67,7 @@ class Raid:
                 event_id = i['event_id']
                 for j in events_json['event_objects']:
                     if(j['id'] == event_id):
-                        raid_string = iso8601.parse_date(i['date']).strftime('%a %d %B %H:%M') + '\nPlease [click here](' + self.bot.SHIVTR_URL + 'events/' + str(i['event_id']) + '?event_instance_id=' + str(i['id']) + ' \"' + j['name'] + '\") to sign up!'
+                        raid_string = iso8601.parse_date(i['date']).strftime('%a %d %B %H:%M') + '\nPlease [click here](' + self.bot.RAID_URL + 'events/' + str(i['event_id']) + '?event_instance_id=' + str(i['id']) + ' \"' + j['name'] + '\") to sign up!'
                         embed = discord.Embed(colour=0x00FF00, description=raid_string)
                         embed.title = j['name']
                 break
@@ -70,18 +75,16 @@ class Raid:
                 raid_string = 'There are currently no events scheduled.'
                 embed = discord.Embed(colour=0xFF0000, description=raid_string)
 
-        await self.bot.say(embed=embed)
-
-    async def signup_reminder(self):
-        channel = self.bot.get_channel('314866130600853516')
-        reminder_message = 'Sign up window closes in 1 hour, type !raid in chat for a link to the event.'
+        await self.bot.send_message(channel, embed=embed)
+    
+    async def signup_reminder(self, channel):
+        reminder_message = 'Sign up window closes in 1 hour, sign up below.'
         embed = discord.Embed(colour=0xFF9900, description=reminder_message)
         await self.bot.send_message(channel, '@everyone')
         await self.bot.send_message(channel, embed=embed)
 
-    async def signup_close(self):
-        channel = self.bot.get_channel('314866130600853516')
-        closed_message = 'Sign up window has now closed. If for whatever reason you missed the window, type !raid in chat for a link to the event and comment your status.'
+    async def signup_close(self, channel):
+        closed_message = 'Sign up window has now closed.\nIf for whatever reason you missed the window, click the link below and comment your status.'
         embed = discord.Embed(colour=0xFF0000, description=closed_message)
         await self.bot.send_message(channel, '@everyone')
         await self.bot.send_message(channel, embed=embed)
@@ -89,13 +92,22 @@ class Raid:
     async def scheduler(self):
         await self.bot.wait_until_ready()
         await asyncio.sleep(5)
+        channel = self.bot.get_channel(self.bot.REMINDER_ROOM_ID)
         while not self.bot.is_closed:
             tz = pytz.timezone('Europe/Amsterdam')
             now = datetime.datetime.now(tz)
             if datetime.datetime.today().weekday() in (1,5) and now.strftime('%H%M') == '1745':
-                await self.signup_reminder()
+                await self.signup_reminder(channel)
+                await self.raid_details(channel)
             elif datetime.datetime.today().weekday() in (1,5) and now.strftime('%H%M') == '1845':
-                await self.signup_close()
+                await self.signup_close(channel)
+                await self.raid_details(channel)
+            elif datetime.datetime.today().weekday() == 3 and now.strftime('%H%M') == '1900':
+                await self.bot.send_message(channel, '@everyone Sign up for tomorrow.')
+                await self.raid_details(channel)
+            elif datetime.datetime.today().weekday() == 4 and now.strftime('%H%M') == '1900':
+                await self.bot.send_message(channel, '@everyone Event starts in 1 hour.')
+                await self.raid_details(channel)
             else:
                 pass
             await asyncio.sleep(60)
